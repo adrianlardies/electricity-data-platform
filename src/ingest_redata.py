@@ -1,6 +1,10 @@
+# 1. CONFIGURACIÓN
+
 import json
 
 import requests
+
+# 2. REQUEST
 
 url = "https://apidatos.ree.es/es/datos/balance/balance-electrico?start_date=2026-01-01T00:00&end_date=2026-01-31T23:59&time_trunc=day"
 
@@ -11,6 +15,8 @@ print(type(response))
 status = response.status_code
 
 print(status)
+
+# 3. VALIDACIÓN,DECODING Y PERSISTENCIA/GUARDADO
 
 try:
     response.raise_for_status()
