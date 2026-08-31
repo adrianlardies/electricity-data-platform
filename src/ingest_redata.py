@@ -1,10 +1,18 @@
 # 1. CONFIGURACIÓN
 
 import json
+from pathlib import Path
 
 import requests
 
 # 2. REQUEST
+
+output_dir = Path("data/raw/")
+file_path = output_dir / "electricity.json"
+
+print(output_dir.exists())
+print(output_dir.is_file())
+print(output_dir.is_dir())
 
 url = "https://apidatos.ree.es/es/datos/balance/balance-electrico"
 
@@ -27,7 +35,11 @@ print(status)
 try:
     response.raise_for_status()
     response_data = response.json()
-    with open("data/raw/electricity.json", "w", encoding="utf-8") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         json.dump(response_data, file, indent=4, ensure_ascii=False)
-except requests.exceptions.HTTPError as error:
-    print(error)
+except requests.exceptions.HTTPError:
+    print("El servidor devolvió un error HTTP:", response.status_code)
+except requests.exceptions.ConnectionError:
+    print("No se pudo conectar con el servidor.")
+except requests.exceptions.Timeout:
+    print("El tiempo de respuesta es muy largo.")
