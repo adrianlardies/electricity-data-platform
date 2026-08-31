@@ -1,11 +1,9 @@
-# 1. CONFIGURACIÓN
+# 1. Configuración/Input
 
 import json
 from pathlib import Path
 
 import requests
-
-# 2. REQUEST
 
 output_dir = Path("data/raw/")
 
@@ -19,18 +17,31 @@ params = {
     "time_trunc": "day",
 }
 
-# 3. VALIDACIÓN,DECODING Y PERSISTENCIA/GUARDADO
+# 2. Obtener los datos desde REData
 
-try:
-    response = requests.get(url, params=params, timeout=10)
-    status = response.status_code
-    response.raise_for_status()
+
+def obtain_json():
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        status = response.status_code
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        print("El servidor devolvió un error HTTP:", status)
+    except requests.exceptions.ConnectionError:
+        print("No se pudo conectar con el servidor.")
+    except requests.exceptions.Timeout:
+        print("El tiempo de respuesta es muy largo.")
+    return response
+
+
+# 3. Guardar los datos obtenidos como raw JSON
+
+
+def save_json(response):
     response_data = response.json()
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(response_data, file, indent=4, ensure_ascii=False)
-except requests.exceptions.HTTPError:
-    print("El servidor devolvió un error HTTP:", response.status_code)
-except requests.exceptions.ConnectionError:
-    print("No se pudo conectar con el servidor.")
-except requests.exceptions.Timeout:
-    print("El tiempo de respuesta es muy largo.")
+
+
+obtain_json()
+save_json(obtain_json())
