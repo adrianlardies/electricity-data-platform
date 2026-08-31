@@ -8,11 +8,8 @@ import requests
 # 2. REQUEST
 
 output_dir = Path("data/raw/")
-file_path = output_dir / "electricity.json"
 
-print(output_dir.exists())
-print(output_dir.is_file())
-print(output_dir.is_dir())
+file_path = output_dir / "electricity.json"
 
 url = "https://apidatos.ree.es/es/datos/balance/balance-electrico"
 
@@ -22,17 +19,11 @@ params = {
     "time_trunc": "day",
 }
 
-response = requests.get(url, params=params, timeout=10)
-
-print(type(response))
-
-status = response.status_code
-
-print(status)
-
 # 3. VALIDACIÓN,DECODING Y PERSISTENCIA/GUARDADO
 
 try:
+    response = requests.get(url, params=params, timeout=10)
+    status = response.status_code
     response.raise_for_status()
     response_data = response.json()
     with open(file_path, "w", encoding="utf-8") as file:
